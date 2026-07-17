@@ -1,1 +1,96 @@
+Bill of Materials & Wiring Reference
+
+Component list
+
+|  | Component | Purpose |
+|---|---|---|
+| 1 | Brushless motors, 2212 900–920KV (x4) | Generate thrust for flight |
+| 2 | ESC, 40A, 2–6S (x4) | Converts PWM signal to 3-phase power for motors |
+| 3 | Wiring | Electrical connections between subsystems |
+| 4 | Pixhawk 6C | Flight controller — manages sensors and overall flight |
+| 5 | Telemetry, 433 MHz | Wireless FC ↔ ground station link (MAVLink) |
+| 6 | GPS, Holybro M9N | Positioning/navigation for autonomous & assisted modes |
+| 7 | Transmitter | Sends pilot control commands |
+| 8 | Receiver | Relays transmitter signal to flight controller |
+| 9 | Battery, LiPo 5200mAh 35C (6S) | Power supply for entire system |
+| 10 | Power module | Regulates/distributes battery power to FC and peripherals |
+| 11 | Vibration damper | Isolates FC from frame vibration (protects IMU accuracy) |
+| 12 | PDB (S500 frame) | Distributes power throughout the airframe |
+| 13 | Arms & landing gear (x4 each) | Structural support, stability on takeoff/landing |
+| 14 | Propellers, 1045 (x4) | Converts motor torque to thrust |
+
+ Pixhawk 6C connections
+
+ ESC (via I/O port)
+
+| Pin | Function |
+|---|---|
+| Signal | To motor's signal pin (motor N → output pin N) |
+| Ground | To GND pin |
+| Power | Red wire disconnected/insulated on standard BEC ESCs — Pixhawk's dedicated power module handles this instead |
+
+GPS (M9N, via GPS1 port)
+
+| Wire | Signal | Function |
+|---|---|---|
+| Red | VCC_5V | Power supply |
+| White | TX | Data out from Pixhawk |
+| Yellow | RX | Data into Pixhawk |
+| Green | I2C1_SCL | Compass clock |
+| Blue | I2C1_SDA | Compass data |
+| Orange | Safety | Safety switch |
+| Purple | Safety LED | Safety LED |
+| Brown | VCC_3V3 | 3.3V peripheral power |
+| Grey | Buzzer | Piezo buzzer |
+| Black | GND | Ground |
+
+GPS must be mounted with its front aligned to the vehicle front for accurate heading.
+
+ Telemetry (433 MHz, via TELEM1 port)
+
+| Pin | Signal | Function |
+|---|---|---|
+| 1 (Red) | 5V | Power |
+| 2 (Black) | UART7_TX (out) | FC TX → Radio RX |
+| 3 (Black) | UART7_RX (in) | FC RX ← Radio TX |
+| 4 (Black) | UART7_CTS (in) | Flow control |
+| 5 (Black) | UART7_RTS (out) | Flow control |
+| 6 (Black) | GND | Ground |
+
+Power (via POWER1 port, from Power Module)
+
+| Pin | Signal | Voltage |
+|---|---|---|
+| 1 (Red) | VCC_5V | +5V input (4.75–5.5V) |
+| 2 (Black) | VCC_5V | +5V input, parallel (current capacity) |
+| 3 (Black) | CURRENT | Analog — battery current draw |
+| 4 (Black) | VOLTAGE | Analog — battery voltage |
+| 5 (Black) | GND | Ground |
+| 6 (Black) | GND | Ground |
+
+Sizing math
+
+Weight budget (example build):
+
+| Component | Weight |
+|---|---|
+| Frame | 500 g |
+| 4 motors | 220 g |
+| 4 ESCs | 120 g |
+| Pixhawk 6C | 40 g |
+| GPS | 25 g |
+| Telemetry | 30 g |
+| Battery | 600 g |
+| Other (mounts, damper, etc.) | 150 g |
+|Total| ≈1685 g (1.7 kg)|
+
+Thrust requirement (2:1 thrust-to-weight ratio):
+- Total thrust needed = 2 × 1.7 kg = 3.4 kg
+- Per motor (4 motors) = 850 g
+
+Battery max continuous current: Capacity (Ah) × C-rating → 5.2 Ah × 35C = 182 A
+
+Estimated flight time: Capacity ÷ average current draw → 5.2 Ah ÷ 20 A ≈ 15.6 minutes (varies with payload, maneuvering, wind, battery health)
+
+ESC sizing rule: ESC rating must exceed max motor current. Here, 18 A motor draw → 40 A ESC selected (safe margin).
 
